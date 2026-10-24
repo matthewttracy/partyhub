@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+</head>
+
+</head>
+<body>
+    <h1>Queue</h1>
+    <ol id="queuelist"></ol>
+    <script>
+        setInterval(displayqueue, 2000);
+        function displayqueue(){
+            fetch("/queue")
+                .then(queuelist.textContent = "")
+                .then(response => response.json())
+                .then(songs => {
+                    const listelement = document.getElementById("queuelist");
+                    for (let i of songs){
+                        var newitem = document.createElement("li");
+                        newitem.textContent = `${i.title}, ${i.artist}`;
+                        listelement.appendChild(newitem);
+                    }   
+                }
+            );
+        }
+    </script>
+</body>
+</html>

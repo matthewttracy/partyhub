@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 app = Flask(__name__)
 ############################
 
@@ -9,9 +9,14 @@ next_id = 0
 def hello_world():
     return "<p>Hello, World!</p>"
 
+@app.route("/display")
+def display():
+    return send_from_directory("static", "display.html")
+
+
 
 @app.route("/queue", methods=['GET', 'POST'])
-def display():
+def queue():
     # allow global variable access
     global next_id
 
