@@ -1,26 +1,55 @@
 <!DOCTYPE html>
 <html>
-</head>
+<head>
 
 </head>
 <body>
-    <h1>Queue</h1>
+    <h1 id = "currentlyplaying">Nothing playing</h1>
+    <p id = "connectionstatus"></p>
+    <h3 id = "nextup"></h3>
     <ol id="queuelist"></ol>
     <script>
         setInterval(displayqueue, 2000);
         function displayqueue(){
             fetch("/queue")
-                .then(queuelist.textContent = "")
                 .then(response => response.json())
                 .then(songs => {
+                    // clears list
                     const listelement = document.getElementById("queuelist");
-                    for (let i of songs){
-                        var newitem = document.createElement("li");
-                        newitem.textContent = `${i.title}, ${i.artist}`;
-                        listelement.appendChild(newitem);
-                    }   
-                }
-            );
+                    listelement.textContent = ""
+                    // updates status
+                    const statuselement = document.getElementById("connectionstatus");
+                    statuselement.textContent = "";
+                    // shows current playing -- 0 for empty, 1 for no queue, else for normal
+                    const currentlyplaying = document.getElementById("currentlyplaying")
+                    if(songs.length == 0){
+                        currentlyplaying.textContent = 'Nothing playing';
+                        const nextup = document.getElementById("nextup");
+                        nextup.textContent = "";
+                    }
+                    else if(songs.length == 1){
+                        const nextup = document.getElementById("nextup");
+                        nextup.textContent = "No songs in the queue";
+                        currentlyplaying.textContent = `Currently playing: ${songs[0].title}, ${songs[0].artist}`;
+                    }
+                    else
+                    {
+                        const nextup = document.getElementById("nextup");
+                        nextup.textContent = 'Next Up:'
+                        currentlyplaying.textContent = `Currently playing: ${songs[0].title}, ${songs[0].artist}`;
+                        for (let i = 1; i < songs.length; i++){
+                            var newitem = document.createElement("li");
+                            newitem.textContent = `${songs[i].title}, ${songs[i].artist}`;
+                            listelement.appendChild(newitem);
+                        }
+                    }     
+                })
+                // finds connection errors 
+                .catch(error => {
+                    console.log(`Error fetching data from server: ${error}`);
+                    const statuselement = document.getElementById("connectionstatus");
+                    statuselement.textContent = "Error connecting to server -- data may be out of date";
+                });
         }
     </script>
 </body>
