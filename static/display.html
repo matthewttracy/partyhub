@@ -42,7 +42,7 @@
                             newitem.textContent = `${songs[i].title}, ${songs[i].artist}`;
                             listelement.appendChild(newitem);
                         }
-                    }     
+                    }
                 })
                 // finds connection errors 
                 .catch(error => {
@@ -50,7 +50,7 @@
                     const statuselement = document.getElementById("connectionstatus");
                     statuselement.textContent = "Error connecting to server -- data may be out of date";
                 });
-        }
-    </script>
-</body>
+            }
+        </script>
+    </body>
 </html>

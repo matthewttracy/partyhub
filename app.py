@@ -3,6 +3,7 @@ app = Flask(__name__)
 ############################
 
 musicqueue = []
+pendingqueue = []
 next_id = 0
 
 @app.route("/")
@@ -55,3 +56,28 @@ def skip_song():
         return "skipped song - 200"
     except IndexError:
         return "no song to skip - 404"
+
+def decide(song):
+    return "pending"
+
+@app.route("/suggest", methods = ["POST"])
+def suggest():
+    global next_id
+    songjson = request.json
+    #validating input
+    if(songjson.get('title') == '' or songjson.get('artist') == ''):
+        return jsonify({"error": "missing data"}), 400
+    else:
+        # creating dictionary for new song 
+        newsong = {"id": next_id, "title": songjson.get('title'), "artist": songjson.get('artist')}
+        next_id += 1
+        verdict = decide(newsong)
+        if (verdict == "pending"):
+            pendingqueue.append(newsong)
+            return "pending"
+        elif (verdict == "approve"):
+            musicqueue.append(newsong)
+            return "approve"
+        else:
+            return "reject"
+
